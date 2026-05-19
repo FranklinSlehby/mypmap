@@ -1,0 +1,33 @@
+#ifndef FORMAT_H
+#define FORMAT_H
+
+
+
+#include "options.h"
+#include "maps_reader.h"
+
+/**
+ * print_proc_header() — Affiche "PID:  nom_processus"
+ *
+ * BTS-04 : en-tête obligatoire du mode standard
+ * BTS-06 : silencieux si opts->quiet == 1
+ */
+void        print_proc_header(Options *opts);
+
+/**
+ * get_mapping_name() — Retourne le nom du mapping à afficher
+ *
+ * BTS-07 : retourne le chemin absolu si opts->show_path == 1
+ *          Sinon retourne e->mapping tel quel
+ */
+const char *get_mapping_name(Options *opts, MapEntry *e);
+
+/**
+ * addr_in_range() — Vérifie si une zone passe le filtre -A
+ *
+ * BTS-10 : retourne 1 si la zone est dans [addr_lo, addr_hi]
+ *          retourne 1 si le filtre n'est pas actif
+ */
+int         addr_in_range(Options *opts, MapEntry *e);
+
+#endif /* FORMAT_H */
