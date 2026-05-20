@@ -2,18 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
-#include <options.h>
+#include "options.h"
 
 static const struct option long_opts[] = 
 {
-    ("extended" , no_argument,  NULL,'x'),
-    ("very-extended" , no_argument, NULL, 'X'),
-    ("device" , no_argument, NULL, 'd'),
-    ("quiet" , no_argument, NULL, 'q'),
-    ("show-path" , no_argument, NULL, 'p'),
-    ("range" , no_argument, NULL, 'A'),
-    ("help" , no_argument, NULL, 'h'),
-    (NULL, 0, NULL, 0)
+    {"extended" , no_argument,  NULL,'x'},
+    {"very-extended" , no_argument, NULL, 'X'},
+    {"device" , no_argument, NULL, 'd'},
+    {"quiet" , no_argument, NULL, 'q'},
+    {"show-path" , no_argument, NULL, 'p'},
+    {"range" , required_argument, NULL, 'A'},
+    {"help" , no_argument, NULL, 'h'},
+    {NULL, 0, NULL, 0}
 };
 
 static void usage(const char *prog)
@@ -21,12 +21,12 @@ static void usage(const char *prog)
     fprintf(stderr,
     "Usage: %s [OPTIONS] PID...\n"
     " -x, --extended RSS et Dirty (smaps)\n"
-    " -X, --very-extended TOus les champs smaps\n"
-    " -d --device Offset, device, inode\n"
-    " -q --quiet Sans en-tete\n"
-    " -p -- show-path Chemin complet\n"
+    " -X, --very-extended Tous les champs smaps\n"
+    " -d, --device Offset, device, inode\n"
+    " -q, --quiet Sans en-tete\n"
+    " -p, --show-path Chemin complet\n"
     " -A lo,hi Filtre adresse (hex)\n"
-    " -h --help Cette aide\n" , prog);
+    " -h, --help Cette aide\n" , prog);
 }
 
 static int parse_range(const char *arg, Options *opts)
@@ -59,7 +59,7 @@ int parse_options(int argc, char *argv[], Options *opts)
             case 'q': opts->quiet = 1; break;
             case 'p': opts->show_path = 1; break;
             case 'A':
-                if(parset_range(optarg, opts) != 0)
+                if(parse_range(optarg, opts) != 0)
                 {
                     fprintf(stderr, "mypmap: -A invalide (format: lo,hi en hex)\n");
                     return -1;
@@ -84,7 +84,7 @@ int parse_options(int argc, char *argv[], Options *opts)
 
     for (int i = 0; i < opts->pid_count; i++)
     {
-        char *end:
+        char *end;
         long v = strtol(argv[optind + i], &end, 10);
         if (*end != '\0' || v<=0)
         {
